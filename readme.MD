@@ -159,5 +159,84 @@ tf-k8s-cd/
   ```
     # EKS 클러스터명 조회 (리전 수정)
     aws eks list-clusters  --region ap-southeast-1  --output table
+    ---
+    ---------------------------------------                               
+    |            ListClusters             |
+    +-------------------------------------+
+    ||             clusters              ||
+    |+-----------------------------------+|
+    ||  de-ai-01-eks-auto-dev            ||
+    ||  de-ai-03-devops-tf-eks-auto-dev  ||
+    ||  de-ai-04-eks-auto-dev            ||
+    ||  de-ai-16-devops-tf-eks-auto-dev  ||
+    |+-----------------------------------+|
 
+    # 연결 (클러스터명 교체)
+    aws eks update-kubeconfig --region ap-southeast-1 --name de-ai-03-devops-tf-eks-auto-dev
+    ---
+    Updated context arn:aws:eks:ap-southeast-1:827913617635:cluster/de-ai-03-devops-tf-eks-auto-dev in C:\Users\NT551_11TH\.kube\config
+
+    # kubectl이 실제 접근 가능한 클러스터 목록(가능한지)
+    kubectl get namespaces
+    ---
+    NAME              STATUS   AGE
+    de-ai-03          Active   154m
+    de-ai-25          Active   3h29m
+    default           Active   3h50m
+    kube-node-lease   Active   3h50m
+    kube-public       Active   3h50m
+    kube-system       Active   3h50m
   ```
+
+- Argo CD 설치
+```
+  # 설치
+  .\scripts\bootstrap-cd.bat choikn/devops_tf_k8s_cd
+
+  # Argo CD 상태 확인 - Argo CD 파트 확인
+  # 쿠버네티스 클러스터에 CD 업무를 위해 pod 형태로 설치 운영됨
+  kubectl get pods -n argocd
+  ---
+  NAME                                               READY   STATUS    RESTARTS   AGE
+  argocd-application-controller-0                    1/1     Running   0          2m4s
+  argocd-applicationset-controller-8d6865b7f-hwdtd   1/1     Running   0          2m5s
+  argocd-dex-server-74bbf47cf6-vjz68                 1/1     Running   0          2m5s
+  argocd-notifications-controller-84798f79-5v88g     1/1     Running   0          2m5s
+  argocd-redis-79db4b8976-5fgpw                      1/1     Running   0          2m5s
+  argocd-repo-server-5fcf7766cd-77ljb                1/1     Running   0          2m5s
+  argocd-server-978b68fb7-rxkmq                      1/1     Running   0          2m5s
+
+  # Argo CD와 Github 저장소 연결 상태 확인
+  kubectl get applications -n argocd
+  ---
+  NAME       SYNC STATUS   HEALTH STATUS
+  de-ai-03   OutOfSync     Healthy <- unknown 이면 인증등 절차 추가됨(일단 public으로 진행)
+  ---
+  private인 경우 절차 추가로 문서로 제공
+```
+
+- 현재 상황 체크 
+```
+  # pod 상태 확인
+  kubectl get pods -n de-ai-03
+  ---
+  NAME                  READY   STATUS    RESTARTS   AGE
+  was-6cfcfb466d-9fwhg   1/1     Running   0          93s
+  was-6cfcfb466d-9t477   1/1     Running   0          93s
+  web-64d49d49fb-6p5xs   1/1     Running   0          93s
+  web-64d49d49fb-9lvj7   1/1     Running   0          93s
+
+  # Ingress, ALB 주소 체크
+  kubectl get ingress -n de-ai-03
+  ---
+  NAME         CLASS   HOSTS   ADDRESS                                                                      PORTS   AGE
+  public-alb   alb     *       k8s-deai03-publical-6236663b07-1669150609.ap-southeast-1.elb.amazonaws.com   80      2m9s
+
+  # 현재 클러스터에 배포된 이미지 확인
+  kubectl get deployment web was  -n de-ai-03  -o jsonpath="{range .items[*]}{.metadata.name}{': '}{.spec.template.spec.containers[0].image}{'\n'}{end}"
+  ---
+  web: 827913617635.dkr.ecr.ap-southeast-1.amazonaws.com/de-ai-03-devops-tf-eks-auto-dev/web:dev-latest
+  was: 827913617635.dkr.ecr.ap-southeast-1.amazonaws.com/de-ai-03-devops-tf-eks-auto-dev/was:dev-latest
+  --- 현재 태그명 dev-latest으로 배포되어 있다!!
+
+```
