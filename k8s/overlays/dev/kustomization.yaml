@@ -12,7 +12,7 @@ commonLabels:
 images:
 - name: WAS_IMAGE
   newName: 827913617635.dkr.ecr.ap-southeast-1.amazonaws.com/de-ai-03-devops-tf-eks-auto-dev/was
-  newTag: ba36a68a55b0
+  newTag: 53b3e0229747
 - name: WEB_IMAGE
   newName: 827913617635.dkr.ecr.ap-southeast-1.amazonaws.com/de-ai-03-devops-tf-eks-auto-dev/web
-  newTag: ba36a68a55b0
+  newTag: 53b3e0229747
