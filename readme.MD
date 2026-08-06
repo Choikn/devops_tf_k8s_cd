@@ -99,3 +99,17 @@ tf-k8s-cd/
    ├─ setup-ci-cd-link.sh
    └─ update_images.py             : .tpl 형식으로 작성된 Argo CD 템플릿을 실제 YAML 파일로 변환
 ```
+
+# Argo Cd 폴더
+- Argo CD가 어떤 방식으로 쿠버네티스 리소스를 배포할지 정의
+- .tpl 파일 형식은 실제값이 들어가서 세팅되어야 함 -> 템플릿 파일
+- 세부
+    - CD
+        - argocd/application.yaml.tpl
+            - 애플리케이션 리소스 정의, 쿠버네티스 배포 위치 지정, 실제 감시할 위치 지정
+            - 실제 배포 작업 정의
+        - argocd/project.yaml.tpl
+            - 애플리케이션 논리적 구분, 배포 권한 제한 선언, ecr정보등 참조
+    - 모니터링
+        - argocd/monitoring-application.yaml.tpl
+            - 프로메테우스, 그라파나등 모니터링관련 설정, CD와 관계 x
