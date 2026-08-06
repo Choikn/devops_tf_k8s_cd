@@ -240,3 +240,14 @@ tf-k8s-cd/
   --- 현재 태그명 dev-latest으로 배포되어 있다!!
 
 ```
+
+- CI 저장소 ci.yaml jobs중 `update-cd:` 이하 주석 해제
+  - 아래 2개 변수
+  - CD_REPOSITORY
+      ```
+        gh variable set CD_REPOSITORY --repo choikn/devops_tf_k8s_cd --body "choikn/devops_tf_k8s_cd"
+      ```
+    - CD_REPOSITORY_TOKEN
+      ```
+        gh auth token | gh secret set CD_REPOSITORY_TOKEN --repo choikn/devops_tf_k8s_ci
+      ```
