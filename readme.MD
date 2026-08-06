@@ -113,3 +113,17 @@ tf-k8s-cd/
     - 모니터링
         - argocd/monitoring-application.yaml.tpl
             - 프로메테우스, 그라파나등 모니터링관련 설정, CD와 관계 x
+
+# 세팅
+- 구분값 교체
+    - de-ai-03 => de-ai-03
+    - DE-AI-03 => DE-AI-03
+
+- ~\k8s\overlays\dev\kustomization.yaml 1회성 수기 수정
+    - newName 파트 수정 : 본인 ECR내 web/was 이미지 주소로 변경
+    ```
+        aws ecr describe-repositories --region ap-southeast-1  --query "repositories[].{Name:repositoryName,URI:repositoryUri}"  --output table
+        ---
+        |  de-ai-03-devops-tf-eks-auto-dev/web |  827913617635.dkr.ecr.ap-southeast-1.amazonaws.com/de-ai-03-devops-tf-eks-auto-dev/web  |
+        |  de-ai-03-devops-tf-eks-auto-dev/was |  827913617635.dkr.ecr.ap-southeast-1.amazonaws.com/de-ai-03-devops-tf-eks-auto-dev/was  |   
+    ```
