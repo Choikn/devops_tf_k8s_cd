@@ -251,3 +251,25 @@ tf-k8s-cd/
       ```
         gh auth token | gh secret set CD_REPOSITORY_TOKEN --repo choikn/devops_tf_k8s_ci
       ```
+
+# ArgoCD 대시보드
+  - ./scripts/open-argocd.bat
+  ```
+  Argo CD URL      : https://localhost:8080
+  Argo CD Username : admin
+  Argo CD Password : b45UikRkqY9kgHN8
+  ```
+
+# 사이트 접속 
+  ```
+    kubectl describe ingress public-alb -n de-ai-03
+    ---
+    Address : k8s-deai03-publical-6236663b07-1669150609.ap-southeast-1.elb.amazonaws.com
+    
+    k8s-deai03-publical-6236663b07-1669150609.ap-southeast-1.elb.amazonaws.com 접속
+
+    ci쪽에서 개발 push -> 잠시후 접속 -> 반영되어 있다
+    # 쿠버네티스 수정은 CD
+    # 인프라 수정은 CI
+    # 코드 수정 CI
+  ```
