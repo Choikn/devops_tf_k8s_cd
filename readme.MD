@@ -10,3 +10,26 @@
         GitHub Actions Push -> ... -> kustomization.yaml 수정 -> Argo Cd 감지 -> ... -> Pod 순차 교체
         (배포) -> 서비스 업데이트 (무중단 실시간 반영)
     ```
+
+# 전체 workflow
+  ```text
+  개발자 Push
+  ↓
+  tf-k8s-ci / GitHub Actions
+  ├─ Terraform·Docker 검증
+  ├─ WEB/WAS 이미지 Build
+  ├─ ECR Push
+  └─ devops_tf_k8s_cd의 이미지 태그를 Git Commit SHA로 변경
+            ↓
+      devops_tf_k8s_cd main
+            ↓
+      Argo CD 자동 감지
+            ↓
+      EKS Auto Mode 동기화
+            ↓
+  Public ALB → WEB Service → WEB Pod → WAS Service → WAS Pod → RDS
+  ```
+
+  - Argo CD는 `k8s/overlays/dev` 여기 감시 -> kustomization.yaml 존재
+  - CI는 ECR에 업로드된 이미지의 태그(Git Commit SHA는 push 할때마다 변경)를 kustomization.yaml 기록
+  - 변경되면 CD 진행됨
